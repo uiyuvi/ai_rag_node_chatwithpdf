@@ -8,3 +8,9 @@ Learning this from - https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s
         2.4.1. Already created username and password for the db should be present > local environment > ip address list > allow ip will connect > cluster will be created
         2.4.2. Get conenction string > copy connection string and replace with db password > create .env file > DB=connectionstring > with dotenv package you can access config
     2.5. test connection with mongodb
+3. Embeddings
+    3.1. install openai / call openai endpoint using axios
+    3.2. create key in openai api
+        3.2.1. configure OPENAI_API_KEY=keycreatedatopenapi, OPENAI_API_ORGANIZATION=organizationid
+    3.3. expose /embeddings api, test embeddings creation
+        3.3.1. if you face 429 error - check your credits are expired undr usage. if yes, buy minimum credits to make this work.
