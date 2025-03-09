@@ -28,7 +28,12 @@ Learning this from [youtube](https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s)
         3.1.3. expose /embeddings api, test embeddings creation
 
             3.1.3.1. if you face 429 error - check your credits are expired undr usage. if yes, buy minimum credits to make this work.
+    
     3.2 Load document - using pdf2json
+    
+    3.3 chunk document - use new line separator to chunk
+
+    3.4 create embeddings from the chunk, load in mongodb cluster. - This takes lot of time depends on the document, since this is for learning, optimisation like utilising multiple core or parallelisation techniques are ignored 
 
 
 ### Vector search Architecture

@@ -12,7 +12,6 @@ async function createEmbeddings(text) {
             input: text,
             encoding_format: "float",          
         });
-        console.log(embeddings);
         /* const response = await axios.post(
             'https://api.openai.com/v1/embeddings',
             {
