@@ -57,7 +57,22 @@ Learning this from [youtube](https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s)
             ```
 
         4.1.3. next > create search index > it will take time to perform indexing. why we need this indexing? when we ask question, it is easy to perform search based on this indexing outcome
+5. Conversation:
 
+        5.1. create db for conversation - [refer](#db-design)
+
+
+# db design
+
+    1. create session collection
+        
+        1.1. session could contains more than one converation
+        
+        1.2. session id, dateTime when it is created
+
+    2. create conversation collection
+
+        2.1. conversation id, benongs to which session id, message, role of the message (user | AI)
 
 ### Vector search Architecture
 
@@ -65,4 +80,6 @@ Learning this from [youtube](https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s)
     pdf > chunk > encoder(openai,llama,word2vec) -> vector -> vector db
 ## step 2:
     perform vector indexing
+## step 3:
+    user query > encoder to create embeddings > vector > perform search in mogodb based on vector > retrieve results > feed to llm > which responds in human language
     
