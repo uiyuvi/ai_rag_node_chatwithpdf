@@ -1,4 +1,7 @@
+### RAG - Retrieval Augmented Generation
+
 Learning this from [youtube](https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s)
+
 1. create new project using npm-express-generator
 2. create mongodb atlas account
 
