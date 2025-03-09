@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var mongodb = require('mongodb');
 const { createEmbeddings } = require('./embeddings');
+const PDFParser = require('pdf2json');
+const fs = require("fs");
+
+const pdfParser = new PDFParser(this, 1);
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
@@ -26,5 +30,29 @@ router.get('/embeddings', async function (req, res, next) {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.post('/loadDocument', async function (request, response) {
+  try {
+    await pdfParser.loadPDF("./doc/optima-secure-revision-policywording.pdf");
+    pdfParser.on("pdfParser_dataReady", async (pdfData) => {
+      await fs.writeFileSync(
+        "./context.txt",
+        pdfParser.getRawTextContent()
+      );
+      const content = await fs.readFileSync("./context.txt", "utf8");
+      response.json({ message: "Document loaded successfully" });
+    });
+
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ error: error.message });
+  }
+})
+
+pdfParser.on("pdfParser_dataError", (errData) =>
+  console.error(errData.parserError)
+);
+
+
 
 module.exports = router;
