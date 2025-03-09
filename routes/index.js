@@ -4,6 +4,7 @@ var { MongoClient, ObjectId } = require('mongodb');
 const { createEmbeddings } = require('./embeddings');
 const PDFParser = require('pdf2json');
 const fs = require("fs");
+const OpenAI = require('openai');
 
 const pdfParser = new PDFParser(this, 1);
 
@@ -139,12 +140,34 @@ router.post('/conversation', async function (request, response) {
       }
     ]);
 
+    //feed vector search results to chat model to return response in human language
     let finalResults = []
     for await (let result of vectorSearchResults) {
       finalResults.push(result);
     }
 
-    response.json(finalResults)
+    const openai = new OpenAI({
+      organization: process.env.OPENAI_API_ORGANIZATION,
+      apiKey: process.env.OPENAI_API_KEY_PROJECTID_RAG
+    });
+
+    const chat = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are humble helper who can answer for questions asked by users from the given content"
+        },
+        {
+          role: "user",
+          content: `${finalResults.map(result => result.text + "\n")}
+          \n
+          From the above context answer following question: ${request.body.message}`
+        }
+      ]
+    })
+
+    response.json(chat.choices[0].message.content);
   } catch (error) {
     console.log(error);
     response.status(500).json({ error: error.message });
