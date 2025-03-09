@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var {MongoClient, ObjectId} = require('mongodb');
+var { MongoClient, ObjectId } = require('mongodb');
 const { createEmbeddings } = require('./embeddings');
 const PDFParser = require('pdf2json');
 const fs = require("fs");
@@ -99,13 +99,52 @@ router.post('/conversation', async function (request, response) {
     if (sessionID) {
       const sessionCollection = db.collection('sessions');
       const sessionData = await sessionCollection.findOne({ _id: new ObjectId(sessionID) });
-      if (sessionData) {
-        return response.json({ message: "session exists" });
+      if (!sessionData) {
+        return response.status(404).json({ message: "session not found" });
       }
-      return response.status(404).json({ message: "session not found" });
     }
 
-    response.json({ message: "session created" })
+    //conversation logic
+    const conversationCollection = db.collection('conversations');
+    conversationCollection.insertOne({
+      sessionID: sessionID,
+      message: request.body.message,
+      createdAt: new Date(),
+      role: "user"
+    });
+
+    //convert message to vector
+    const messageVector = await createEmbeddings(request.body.message);
+    const documentsCollection = db.collection('documents');
+
+    // perform aggregation to find the most similar document
+    const vectorSearchResults = await documentsCollection.aggregate([
+      {
+        $vectorSearch: {
+          index: "default", // mongo db > atlas search > name of the index of collection about to search
+          path: "embedding", // mogo db > collection > name of the field where vectors are stored
+          queryVector: messageVector.data[0].embedding, // user message as vector
+          numCandidates: 150, // it can return upto 150 documents
+          limit: 10 //limit search results , like take top 10 results
+        }
+      },
+      {
+        $project: {
+          _id: 0, // do not get the id from the search results  (0 | 1 - boolean)
+          text: 1, // get the text from search results (0 | 1 - boolean)
+          score: {
+            $meta: "vectorSearchScore"
+          }
+        }
+      }
+    ]);
+
+    let finalResults = []
+    for await (let result of vectorSearchResults) {
+      finalResults.push(result);
+    }
+
+    response.json(finalResults)
   } catch (error) {
     console.log(error);
     response.status(500).json({ error: error.message });
