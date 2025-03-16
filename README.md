@@ -3,6 +3,11 @@
 Learning this from [youtube](https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s)
 
 1. create new project using npm-express-generator
+
+    npm install nodemon
+
+    nodemon command listens to file change and res-starts automatically
+
 2. create mongodb atlas account
 
     2.1. create organistation - restrict access based on ip
@@ -17,6 +22,8 @@ Learning this from [youtube](https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s)
 
         2.4.2. Get conenction string > copy connection string and replace with db password > create .env file > DB=connectionstring > with dotenv package you can access config
 
+        2.4.3. nodemon will not restart for .env changes - manual stop -> start required!!!
+
     2.5. test connection with mongodb
 
 3. Chunks and Embeddings - read more about it [openai](https://platform.openai.com/docs/guides/embeddings)
@@ -27,6 +34,8 @@ Learning this from [youtube](https://www.youtube.com/watch?v=Tx_k1M9QuqM&t=351s)
         3.1.2. create key in openai api
 
             3.1.2.1. configure OPENAI_API_KEY=keycreatedatopenapi, OPENAI_API_ORGANIZATION=organizationid
+            
+            3.1.2.2. Allow models under project > limits> allow models > text-embedding(to create embeddings to store it as vector), gpt models (to understand human question and answer in a way human understand)
 
         3.1.3. expose /embeddings api, test embeddings creation
 
